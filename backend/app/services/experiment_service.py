@@ -11,6 +11,10 @@ from app.models.evaluation import Evaluation
 from app.repositories.experiment_repository import ExperimentRepository
 from app.repositories.evaluation_repository import EvaluationRepository
 
+#Utils
+from app.utils.logger import logger
+from app.utils.timer import Timer
+
 class ExperimentService:
     def __init__(self):
         self.repository = ExperimentRepository()
@@ -23,10 +27,20 @@ class ExperimentService:
         name: str,
         description: str | None
     ):
+        timer = Timer()
+        timer.start()
+        logger.info("Creating new experiment")
+        
         experiment = Experiment(
             user_id=user_id,
             name=name,
             description=description
+        )
+
+        elapsed = timer.stop()
+        logger.info(
+            "Experiment created in %.3f seconds",
+            elapsed
         )
 
         return self.repository.save(
@@ -62,6 +76,9 @@ class ExperimentService:
         experiment_id: int,
         user_id: str
     ):
+        timer = Timer()
+        timer.start()
+        logger.info("Deleting experiment")
         experiment = self.repository.get_by_id(
             db,
             experiment_id,
@@ -76,6 +93,12 @@ class ExperimentService:
             experiment
         )
 
+        elapsed = timer.stop()
+        logger.info(
+            "Experiment deleted in %.3f seconds",
+            elapsed
+        )
+
         return experiment
 
     def export_csv(
@@ -84,6 +107,10 @@ class ExperimentService:
         experiment_id: int,
         user_id: str
     ):
+        timer = Timer()
+        timer.start()
+        logger.info("Exporting experiment evaluations to CSV")
+
         experiment = self.repository.get_by_id(
             db,
             experiment_id,
@@ -91,6 +118,7 @@ class ExperimentService:
         )
 
         if experiment is None:
+            logger.exception("Experiment not found")
             raise HTTPException(
                 status_code=404,
                 detail="Experiment not found"
@@ -118,6 +146,8 @@ class ExperimentService:
             "Created At"
         ])
 
+        logger.info("Writing experiment's evaluations to CSV")
+
         for evaluation in evaluations:
             writer.writerow([
                 evaluation.model_name,
@@ -131,5 +161,11 @@ class ExperimentService:
                 evaluation.summary,
                 evaluation.created_at
             ])
+
+        elapsed = timer.stop()
+        logger.info(
+            "Experiment evaluations exported to CSV in %.3f seconds",
+            elapsed
+        )
 
         return output.getvalue()

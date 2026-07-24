@@ -4,6 +4,7 @@ from fastapi import HTTPException
 from fastapi import Depends
 from fastapi import Query
 from fastapi.responses import Response
+from fastapi import status
 from sqlalchemy.orm import Session
 
 #Schemas
@@ -56,7 +57,10 @@ auth_service = AuthService()
 
 @router.post(
     "/login",
-    response_model=AuthResponse
+    status_code=status.HTTP_200_OK,
+    response_model=AuthResponse,
+    summary="User login",
+    description="Authenticates a user and returns access and refresh tokens."
 )
 def login(data: LoginRequest):
     try:
@@ -75,7 +79,10 @@ def login(data: LoginRequest):
 
 @router.post(
     "/evaluate",
-    response_model=EvaluationResponse
+    status_code=status.HTTP_200_OK,
+    response_model=EvaluationResponse,
+    summary="Evaluate an LLM response",
+    description="Evaluates a prompt-response pair using the multi-agent LangGraph evaluation pipeline."
 )
 def evaluate(
     data: EvaluationRequest,
@@ -112,7 +119,10 @@ def evaluate(
 
 @router.post(
     "/experiments",
-    response_model=ExperimentResponse
+    status_code=status.HTTP_201_CREATED,
+    response_model=ExperimentResponse,
+    summary="Create a new experiment",
+    description="Creates a new experiment for the authenticated user."
 )
 def create_experiment(
     data: ExperimentCreate,
@@ -130,13 +140,21 @@ def create_experiment(
 #           Gets
 #===============================================================================
 
-@router.get("/")
+@router.get(
+    "/",
+    summary="Get API home",
+    description="Returns a simple message indicating that the LLM Output Arbitrator API is running."
+)
 def home():
     return {
         "message": "LLM Output Arbitrator API is running"
     }
 
-@router.get("/health")
+@router.get(
+    "/health",
+    summary="Check API health",
+    description="Returns the health status of the API."
+)
 def health():
     return {
         "status": "healthy"
@@ -144,7 +162,9 @@ def health():
 
 @router.get(
     "/my-evaluations",
-    response_model=list[EvaluationRecord]
+    response_model=list[EvaluationRecord],
+    summary="Get all evaluations created by the user",
+    description="Returns a list of all evaluations created by the authenticated user."
 )
 def get_my_evaluations(
     db: Session = Depends(get_db),
@@ -158,7 +178,9 @@ def get_my_evaluations(
 
 @router.get(
     "/my-evaluations/{evaluation_id}",
-    response_model=EvaluationRecord
+    response_model=EvaluationRecord,
+    summary="Get a specific evaluation",
+    description="Returns the details of a specific evaluation created by the user."
 )
 def get_evaluation(
     evaluation_id: int,
@@ -179,7 +201,9 @@ def get_evaluation(
 
 @router.get(
     "/analytics",
-    response_model=AnalyticsResponse
+    response_model=AnalyticsResponse,
+    summary="Get user analytics",
+    description="Returns analytics such as average scores, verdict distribution and total evaluations."
 )
 def get_analytics(
     db: Session = Depends(get_db),
@@ -193,7 +217,9 @@ def get_analytics(
 
 @router.get(
     "/model-comparison",
-    response_model=list[ModelComparison]
+    response_model=list[ModelComparison],
+    summary="Get model comparison",
+    description="Returns a comparison of models based on their average scores and verdict distribution."
 )
 def get_model_comparison(
     db: Session = Depends(get_db),
@@ -206,7 +232,9 @@ def get_model_comparison(
 
 @router.get(
     "/experiments",
-    response_model=list[ExperimentResponse]
+    response_model=list[ExperimentResponse],
+    summary="Get user experiments",
+    description="Returns a list of experiments created by the user."
 )
 def get_experiments(
     current_user = Depends(get_current_user),
@@ -219,7 +247,9 @@ def get_experiments(
 
 @router.get(
     "/experiments/{experiment_id}",
-    response_model=ExperimentResponse
+    response_model=ExperimentResponse,
+    summary="Get experiment details",
+    description="Returns the details of a specific experiment created by the user."
 )
 def get_experiment(
     experiment_id: int,
@@ -242,7 +272,9 @@ def get_experiment(
 
 @router.get(
     "/experiments/{experiment_id}/evaluations",
-    response_model=list[EvaluationRecord]
+    response_model=list[EvaluationRecord],
+    summary="Get evaluations for an experiment",
+    description="Returns a list of evaluations associated with a specific experiment created by the user."
 )
 def get_experiment_evaluations(
     experiment_id: int,
@@ -268,7 +300,9 @@ def get_experiment_evaluations(
 
 @router.get(
     "/evaluations",
-    response_model=list[EvaluationRecord]
+    response_model=list[EvaluationRecord],
+    summary="Get evaluations with filters",
+    description="Returns a list of evaluations based on the provided filters such as verdict and experiment ID."
 )
 def get_evaluations(
     verdict: str | None = Query(None),
@@ -288,7 +322,9 @@ def get_evaluations(
     )
 
 @router.get(
-    "/export/evaluations"
+    "/export/evaluations",
+    summary="Export evaluations to CSV",
+    description="Exports all evaluations of the current user to a CSV file."
 )
 def export_evaluations(
     current_user = Depends(get_current_user),
@@ -309,7 +345,9 @@ def export_evaluations(
     )
 
 @router.get(
-    "/experiments/{experiment_id}/export"
+    "/experiments/{experiment_id}/export",
+    summary="Export experiment evaluations to CSV",
+    description="Exports all evaluations associated with a specific experiment to a CSV file."
 )
 def export_experiment(
     experiment_id: int,
@@ -336,7 +374,10 @@ def export_experiment(
 #===============================================================================
 
 @router.delete(
-    "/experiments/{experiment_id}"
+    "/experiments/{experiment_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete an experiment",
+    description="Deletes a specific experiment created by the user along with all its associated evaluations."
 )
 def delete_experiment(
     experiment_id: int,

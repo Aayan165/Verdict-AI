@@ -16,7 +16,3 @@ completeness_provider = GeminiProvider(
     api_key=os.getenv("GEMINI_KEY_3"),
     model=os.getenv("GEMINI_MODEL_3")
 )
-adjudicator_provider = GeminiProvider(
-    api_key=os.getenv("GEMINI_KEY_1"),
-    model=os.getenv("GEMINI_MODEL_1")
-)

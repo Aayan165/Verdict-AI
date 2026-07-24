@@ -119,11 +119,21 @@ class EvaluationService:
         db: Session,
         user_id: str
     ):
+        timer = Timer()
+        timer.start()
+        logger.info("Fetching user analytics")
+        
         analytics = self.repository.get_user_analytics(
             db=db,
             user_id=user_id
         )
         overall, accuracy, logic, completeness = analytics["averages"]
+
+        elapsed = timer.stop()
+        logger.info(
+            "User analytics fetched in %.3f seconds",
+            elapsed
+        )
 
         return {
             "total_evaluations": analytics["total"],
@@ -142,9 +152,18 @@ class EvaluationService:
         db: Session,
         user_id: str
     ):
+        timer = Timer()
+        timer.start()
+        logger.info("Fetching model comparison data")
         evaluations = self.repository.get_model_comparison(
             db=db,
             user_id=user_id
+        )
+
+        elapsed = timer.stop()
+        logger.info(
+            "Model comparison data fetched in %.3f seconds",
+            elapsed
         )
 
         return [
@@ -159,16 +178,6 @@ class EvaluationService:
             }
             for e in evaluations
         ]
-
-    def get_prompt_experiments(
-        self,
-        db: Session,
-        user_id: str
-    ):
-        return self.repository.get_prompt_experiments(
-            db,
-            user_id
-        )
 
     def get_evaluations(
         self,
@@ -193,6 +202,9 @@ class EvaluationService:
         db: Session,
         user_id: str
     ):
+        timer = Timer()
+        timer.start()
+        logger.info("Exporting evaluations to CSV")
         evaluations = self.repository.export(
             db,
             user_id
@@ -216,6 +228,8 @@ class EvaluationService:
             "Created At"
         ])
 
+        logger.info("Writing evaluations to CSV")
+
         for evaluation in evaluations:
             writer.writerow([
             evaluation.model_name,
@@ -230,5 +244,11 @@ class EvaluationService:
             evaluation.experiment_id,
             evaluation.created_at
         ])
+
+        elapsed = timer.stop()
+        logger.info(
+            "Evaluations exported to CSV in %.3f seconds",
+            elapsed
+        )
 
         return output.getvalue()
