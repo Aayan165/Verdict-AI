@@ -5,6 +5,7 @@ import { cn } from '../utils/classNames';
 import { getInitials } from '../utils/jwt';
 import { useAuth } from '../hooks/useAuth';
 import Button from '../components/Button';
+import logo from '../assets/logo.png';
 
 const navigation = [
   { to: '/dashboard', label: 'Dashboard', icon: Gauge },
@@ -38,9 +39,14 @@ export default function Sidebar({ open, onClose }) {
       >
         <div className="mb-8 flex items-center justify-between gap-3">
           <NavLink to="/dashboard" className="flex items-center gap-3" onClick={onClose}>
-            <div className="brand-orb flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-[#F7F1DE] shadow-soft">
+            {/* <div className="brand-orb flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-[#F7F1DE] shadow-soft">
               <div className="h-4 w-4 rounded-full bg-[#F7F1DE]" />
-            </div>
+            </div> */}
+              <img
+                src={logo}
+                alt="LLM Arbitrator Logo"
+                className="flex h-12 w-12 items-center justify-center"
+              />
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">LLM</p>
               <p className="text-lg font-semibold leading-tight text-ink">Arbitrator</p>

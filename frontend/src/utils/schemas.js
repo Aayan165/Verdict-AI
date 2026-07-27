@@ -19,7 +19,7 @@ export const registerSchema = z
 export const evaluateSchema = z.object({
   prompt: z.string().min(10, 'Prompt is too short'),
   response: z.string().min(10, 'Response is too short'),
-  modelName: z.string().min(2, 'Model name is required'),
+  model_name: z.string().min(2, 'Model name is required'),
 });
 
 export const experimentSchema = z.object({

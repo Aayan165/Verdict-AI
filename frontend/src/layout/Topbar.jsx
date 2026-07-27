@@ -33,7 +33,7 @@ export default function Topbar({ onMenuClick, title, subtitle }) {
             </div>
             <div className="hidden sm:block">
               <p className="text-sm font-semibold text-ink">{user?.email || 'Authenticated user'}</p>
-              <p className="text-xs text-muted">JWT session</p>
+              {/* <p className="text-xs text-muted">JWT session</p> */}
             </div>
           </div>
         </div>

@@ -119,7 +119,7 @@ export default function AnalyticsPage() {
               <BarChart data={averageData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(78,34,15,0.08)" />
                 <XAxis dataKey="name" stroke="#7A6A57" />
-                <YAxis stroke="#7A6A57" domain={[0, 100]} />
+                <YAxis stroke="#7A6A57" domain={[0, 10]} />
                 <Tooltip />
                 <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="#4E220F" />
               </BarChart>

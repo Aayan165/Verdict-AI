@@ -1,3 +1,5 @@
+import logo from '../assets/logo.png';
+
 export default function AuthLayout({ title, description, children }) {
   return (
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
@@ -8,21 +10,19 @@ export default function AuthLayout({ title, description, children }) {
           <div className="relative flex h-full flex-col justify-between gap-10">
             <div>
               <div className="mb-8 flex items-center gap-3">
-                <div className="brand-orb flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F7F1DE] text-primary shadow-soft">
+                {/* <div className="brand-orb flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F7F1DE] text-primary shadow-soft">
                   <div className="h-4 w-4 rounded-full bg-primary" />
-                </div>
+                </div> */}
+                <img src={logo} alt="Logo" className="h-[300px] w-[300px] shadow-soft logo-spin" />
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#F7F1DE]/70">LLM</p>
-                  <p className="text-lg font-semibold">Arbitrator System</p>
+                  <p className="text-xl sm:text-5xl font-semibold">Arbitrator System</p>
                 </div>
               </div>
 
-              <p className="max-w-xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
-                Evaluate, compare, and govern LLM responses with one analytical workspace.
-              </p>
+              
               <p className="mt-5 max-w-2xl text-base leading-7 text-[#F7F1DE]/82">
-                Accuracy, logic, and completeness critics feed a LangGraph adjudicator so every response is scored,
-                explained, and ready for experimentation.
+                Evaluate, compare, and govern LLM responses with one analytical workspace.
               </p>
             </div>
 

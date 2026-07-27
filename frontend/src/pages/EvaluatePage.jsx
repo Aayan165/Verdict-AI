@@ -36,7 +36,7 @@ export default function EvaluatePage() {
     getValues,
   } = useForm({
     resolver: zodResolver(evaluateSchema),
-    defaultValues: { prompt: '', response: '', modelName: '' },
+    defaultValues: { prompt: '', response: '', model_name: '' },
   });
 
   const attachForm = useForm({
@@ -95,7 +95,7 @@ export default function EvaluatePage() {
     return {
       prompt: currentValues.prompt,
       response: currentValues.response,
-      model_name: currentValues.modelName,
+      model_name: currentValues.model_name,
       accuracy_score: result.accuracy_score,
       logic_score: result.logic_score,
       completeness_score: result.completeness_score,
@@ -130,7 +130,7 @@ export default function EvaluatePage() {
         <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
           <Textarea label="Prompt" rows={8} placeholder="Enter the original prompt supplied to the model" {...register('prompt')} error={errors.prompt?.message} />
           <Textarea label="Response" rows={12} placeholder="Paste the model response to be evaluated" {...register('response')} error={errors.response?.message} />
-          <Input label="Model name" placeholder="e.g. GPT-4.1, Claude Sonnet, Gemini 2.5" {...register('modelName')} error={errors.modelName?.message} />
+          <Input label="Model name" placeholder="e.g. GPT-4.1, Claude Sonnet, Gemini 2.5" {...register('model_name')} error={errors.model_name?.message} />
 
           <div className="flex flex-wrap gap-3">
             <Button type="submit" size="lg" disabled={evaluating}>

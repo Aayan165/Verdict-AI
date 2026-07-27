@@ -51,6 +51,10 @@ a {
   background-size: 16px 16px;
 }
 
+.logo-spin{
+  animation: spin 10s linear infinite;
+}
+
 .brand-orb {
   position: relative;
 }
