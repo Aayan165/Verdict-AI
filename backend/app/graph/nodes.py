@@ -7,8 +7,6 @@ from app.config.llm_factory import (
     logic_provider,
     completeness_provider
 )
-from app.agents.adjudicator_agent import AdjudicatorAgent
-from app.config.llm_factory import adjudicator_provider
 from app.adjudicator.engine import Adjudicator
 
 accuracy_agent = AccuracyAgent(accuracy_provider)
