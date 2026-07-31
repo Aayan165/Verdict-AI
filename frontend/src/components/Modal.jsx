@@ -26,8 +26,8 @@ export default function Modal({ open, title, description, onClose, children, foo
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(35,21,15,0.44)] px-4 py-8 backdrop-blur-sm" onClick={onClose}>
-      <div className="w-full max-w-3xl rounded-[1.35rem] border border-white/70 bg-[#fcf8eb] p-5 shadow-soft" onClick={(event) => event.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex bg-[rgba(35,21,15,0.44)] px-4 py-8 backdrop-blur-sm" onClick={onClose}>
+      <div className="w-full max-w-3xl md:top-[50vh] top-[10%] left-[50%] translate-x-[-50%] translate-y-[-50%] absolute rounded-[1.35rem] border border-white/70 bg-[#fcf8eb] p-5 shadow-soft" onClick={(event) => event.stopPropagation()}>
         <div className="mb-4 flex items-start justify-between gap-4">
           <div>
             {title ? <h3 className="text-lg font-semibold text-ink">{title}</h3> : null}

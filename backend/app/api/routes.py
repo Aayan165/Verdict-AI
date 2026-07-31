@@ -93,7 +93,7 @@ def evaluate(
         result = service.evaluate(
             db=db,
             prompt=data.prompt,
-            response=data.response,
+            response=data.response, 
             model_name=data.model_name,
             user_id=current_user.id,
             experiment_id=data.experiment_id

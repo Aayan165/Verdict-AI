@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Eye, Trash2 } from 'lucide-react';
+import { Eye, Trash2, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -11,10 +11,18 @@ import Pagination from '../components/Pagination';
 import Select from '../components/Select';
 import Input from '../components/Input';
 import Table from '../components/Table';
-import { deleteEvaluation, getMyEvaluations } from '../features/evaluations/evaluation.service';
+import { deleteEvaluation, getMyEvaluations, exportEvaluations } from '../features/evaluations/evaluation.service';
 import { extractApiError } from '../api/client';
 import { formatDateTime, formatScore } from '../utils/formatters';
 import Skeleton from '../components/Skeleton';
+
+import { Plus } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { experimentAttachSchema } from '../utils/schemas';
+import { addEvaluationToExperiment } from '../features/evaluations/evaluation.service';
+import { getExperiments } from '../features/experiments/experiments.service';
+import { downloadBlob } from '../services/download';
 
 export default function EvaluationsPage() {
   const [loading, setLoading] = useState(true);
@@ -26,6 +34,71 @@ export default function EvaluationsPage() {
   const pageSize = 10;
   const [viewing, setViewing] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+
+  const [experiments, setExperiments] = useState([]);
+  const [loadingExperiments, setLoadingExperiments] = useState(true);
+  const [attachOpen, setAttachOpen] = useState(false);
+  const [selectedEvaluation, setSelectedEvaluation] = useState(null);
+  const [attaching, setAttaching] = useState(false);
+  const [exporting, setExporting] = useState(false);
+
+  const attachForm = useForm({
+    resolver: zodResolver(experimentAttachSchema),
+    defaultValues: {
+      experimentId: '',
+    },
+  });
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadExperiments() {
+      try {
+        const data = await getExperiments();
+
+        if (active) {
+          setExperiments(Array.isArray(data) ? data : []);
+        }
+      } catch {
+        if (active) {
+          setExperiments([]);
+        }
+      } finally {
+        if (active) {
+          setLoadingExperiments(false);
+        }
+      }
+    }
+
+    loadExperiments();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const onAttachSubmit = async (values) => {
+    if (!selectedEvaluation) return;
+
+    setAttaching(true);
+
+    try {
+      await addEvaluationToExperiment(
+        Number(values.experimentId),
+        selectedEvaluation
+      );
+
+      toast.success('Evaluation added to experiment');
+
+      attachForm.reset();
+      setAttachOpen(false);
+      setSelectedEvaluation(null);
+    } catch (error) {
+      toast.error(extractApiError(error));
+    } finally {
+      setAttaching(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -91,8 +164,39 @@ export default function EvaluationsPage() {
     }
   };
 
+  const onExport = async () => {
+    setExporting(true);
+
+    try {
+      const blob = await exportEvaluations();
+
+      downloadBlob(blob, 'evaluations.csv');
+
+      toast.success('CSV exported successfully');
+    } catch (error) {
+      toast.error(extractApiError(error));
+    } finally {
+      setExporting(false);
+    }
+  };
+  
   return (
     <div className="space-y-5">
+      <div className="flex items-center justify-end">
+        <Button
+          onClick={onExport}
+          disabled={exporting || loading || evaluations.length === 0}
+        >
+          {exporting ? (
+            <Loader label="Exporting" />
+          ) : (
+            <>
+              <Download className="h-4 w-4" />
+              Export CSV
+            </>
+          )}
+        </Button>
+      </div>
       <Card title="Filters and sorting" description="Filter by model or verdict and sort by date or overall score.">
         <div className="grid gap-4 lg:grid-cols-[1.1fr_0.8fr_0.8fr]">
           <Input label="Model filter" placeholder="Search by model name" value={modelFilter} onChange={(event) => setModelFilter(event.target.value)} />
@@ -140,6 +244,17 @@ export default function EvaluationsPage() {
                       </Button>
                       <Button variant="danger" size="sm" onClick={() => onDelete(evaluation.id)} disabled={deletingId === evaluation.id}>
                         {deletingId === evaluation.id ? <Loader label="Deleting" /> : <><Trash2 className="h-4 w-4" /> Delete</>}
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedEvaluation(evaluation);
+                          setAttachOpen(true);
+                        }}
+                      >
+                        <Plus className="h-4 w-4" />
+                        Add to Experiment
                       </Button>
                     </div>
                   </td>
@@ -195,6 +310,65 @@ export default function EvaluationsPage() {
             </div>
           </div>
         ) : null}
+      </Modal>
+
+      <Modal
+        open={attachOpen}
+        title="Add Evaluation to Experiment"
+        description="Choose an experiment to attach this evaluation."
+        onClose={() => {
+          setAttachOpen(false);
+          setSelectedEvaluation(null);
+        }}
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setAttachOpen(false);
+                setSelectedEvaluation(null);
+              }}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              type="submit"
+              form="attach-experiment-form"
+              disabled={attaching}
+            >
+              {attaching ? (
+                <Loader label="Attaching" />
+              ) : (
+                'Add to Experiment'
+              )}
+            </Button>
+          </>
+        }
+      >
+        <form
+          id="attach-experiment-form"
+          className="space-y-4"
+          onSubmit={attachForm.handleSubmit(onAttachSubmit)}
+        >
+          <Select
+            label="Experiment"
+            {...attachForm.register('experimentId')}
+            error={attachForm.formState.errors.experimentId?.message}
+          >
+            <option value="">Select experiment</option>
+
+            {experiments.map((experiment) => (
+              <option key={experiment.id} value={experiment.id}>
+                {experiment.name}
+              </option>
+            ))}
+          </Select>
+
+          <div className="rounded-2xl border border-border bg-[rgba(176,186,153,0.16)] p-4 text-sm text-muted">
+            This evaluation will be attached to the selected experiment.
+          </div>
+        </form>
       </Modal>
     </div>
   );
