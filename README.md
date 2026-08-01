@@ -1,8 +1,8 @@
-# Veriq
+# Verdict AI
 
 > AI Evaluation & Model Intelligence Platform
 
-Veriq is an AI-powered evaluation platform that analyzes Large Language Model (LLM) responses using multiple independent evaluation agents. Instead of relying on a single score, Veriq evaluates responses across multiple dimensions and produces a final adjudicated verdict.
+Verdict AI is an AI-powered evaluation platform that analyzes Large Language Model (LLM) responses using multiple independent evaluation agents. Instead of relying on a single score, Verdict AI evaluates responses across multiple dimensions and produces a final adjudicated verdict.
 
 The platform also enables users to organize evaluations into experiments, compare models, analyze performance trends, and export evaluation reports.
 
@@ -97,7 +97,7 @@ The platform also enables users to organize evaluations into experiments, compar
 # Project Structure
 
 ```text
-Veriq/
+Verdict AI/
 │
 ├── frontend/
 │   ├── src/
@@ -287,11 +287,11 @@ GET /export/evaluations
 ## Clone Repository
 
 ```bash
-git clone https://github.com/<username>/Veriq.git
+git clone https://github.com/<username>/Verdict AI.git
 ```
 
 ```bash
-cd Veriq
+cd Verdict AI
 ```
 
 ---
