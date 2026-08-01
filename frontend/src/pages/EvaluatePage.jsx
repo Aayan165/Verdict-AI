@@ -125,27 +125,57 @@ export default function EvaluatePage() {
   };
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1fr_0.95fr]">
-      <Card title="Evaluate a response" description="Submit a prompt, the model output, and the model name for scoring.">
-        <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
-          <Textarea label="Prompt" rows={8} placeholder="Enter the original prompt supplied to the model" {...register('prompt')} error={errors.prompt?.message} />
-          <Textarea label="Response" rows={12} placeholder="Paste the model response to be evaluated" {...register('response')} error={errors.response?.message} />
-          <Input label="Model name" placeholder="e.g. GPT-4.1, Claude Sonnet, Gemini 2.5" {...register('model_name')} error={errors.model_name?.message} />
+    <div className="space-y-6">
+      {!result && (
+        <Card
+          title="Evaluate a response"
+          description="Submit a prompt, the model output, and the model name for scoring."
+        >
+          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+            <Textarea
+              label="Prompt"
+              rows={8}
+              placeholder="Enter the original prompt supplied to the model"
+              {...register('prompt')}
+              error={errors.prompt?.message}
+            />
 
-          <div className="flex flex-wrap gap-3">
-            <Button type="submit" size="lg" disabled={evaluating}>
-              {evaluating ? <Loader label="Evaluating" /> : 'Evaluate'}
-              {!evaluating ? <ArrowRight className="h-4 w-4" /> : null}
-            </Button>
-            <Button variant="secondary" size="lg" type="button" onClick={() => reset()}>
-              Clear form
-            </Button>
-          </div>
-        </form>
-      </Card>
+            <Textarea
+              label="Response"
+              rows={12}
+              placeholder="Paste the model response to be evaluated"
+              {...register('response')}
+              error={errors.response?.message}
+            />
 
+            <Input
+              label="Model name"
+              placeholder="e.g. GPT-4.1, Claude Sonnet, Gemini 2.5"
+              {...register('model_name')}
+              error={errors.model_name?.message}
+            />
+
+            <div className="flex gap-3">
+              <Button type="submit" size="lg" disabled={evaluating}>
+                {evaluating ? <Loader label="Evaluating" /> : "Evaluate"}
+                {!evaluating && <ArrowRight className="h-4 w-4" />}
+              </Button>
+
+              <Button
+                variant="secondary"
+                type="button"
+                size="lg"
+                onClick={() => reset()}
+              >
+                Clear Form
+              </Button>
+             
+              </div>
+          </form>
+        </Card>
+      )}
       <div className="space-y-6">
-        <Card title="Saved experiments" description="Attach the current evaluation result to an experiment after scoring.">
+        {/* <Card title="Saved experiments" description="Attach the current evaluation result to an experiment after scoring.">
           {loadingExperiments ? (
             <Loader label="Loading experiments" />
           ) : experiments.length ? (
@@ -160,7 +190,7 @@ export default function EvaluatePage() {
           ) : (
             <EmptyState title="No experiments yet" description="Create an experiment first to organize evaluation outputs." />
           )}
-        </Card>
+        </Card> */}
 
         {result ? (
           <Card
@@ -209,14 +239,28 @@ export default function EvaluatePage() {
             </div>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button variant="secondary" size="lg" onClick={() => setAttachOpen(true)}>
-                <Plus className="h-4 w-4" />
-                Add to Experiment
-              </Button>
-            </div>
+            <Button
+              variant="secondary"
+              size="lg"
+              onClick={() => {
+                setResult(null);
+              }}
+            >
+              ← Back to Evaluation
+            </Button>
+
+            <Button
+              size="lg"
+              onClick={() => setAttachOpen(true)}
+            >
+              <Plus className="h-4 w-4" />
+              Add to Experiment
+            </Button>
+          </div>
           </Card>
         ) : (
-          <EmptyState title="No result yet" description="Run an evaluation to see the adjudicator output and attach it to an experiment." />
+          // <EmptyState title="No result yet" description="Run an evaluation to see the adjudicator output and attach it to an experiment." />
+          null
         )}
       </div>
 
