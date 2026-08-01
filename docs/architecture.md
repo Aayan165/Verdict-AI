@@ -1,277 +1,214 @@
-# 🏛️ LLM Output Arbitration System - Architecture
+# System Architecture
 
 ## Overview
 
-The LLM Output Arbitration System is a multi-agent AI application designed to evaluate the quality of Large Language Model (LLM) responses.
+Verdict AI follows a layered architecture to separate API logic, business logic, database access, and AI evaluation.
 
-Instead of relying on a single evaluation, multiple specialized AI critic agents independently analyze the same response from different perspectives. Their findings are then synthesized by an Adjudicator Agent, producing a final verdict along with confidence scores and actionable feedback.
-
-The system follows a layered architecture to separate concerns and improve maintainability.
-
----
-
-# High-Level Architecture
-
-```mermaid
-flowchart TD
-
-A[User]
---> B[FastAPI Endpoint]
-
-B --> C[Create ArbitrationState]
-
-C --> D[LangGraph Workflow]
-
-D --> E[Accuracy Critic]
-D --> F[Logic Critic]
-D --> G[Completeness Critic]
-
-E --> H[Adjudicator]
-F --> H
-G --> H
-
-H --> I[Updated ArbitrationState]
-
-I --> J[FastAPI Receives Result]
-
-J --> K[Save to Database]
-J --> L[Return Response]
+```
+                +----------------------+
+                |      Frontend        |
+                |   React + Vite UI    |
+                +----------+-----------+
+                           |
+                     HTTP / REST API
+                           |
+                           v
+                +----------------------+
+                |      FastAPI API     |
+                |      Routes Layer    |
+                +----------+-----------+
+                           |
+                           v
+                +----------------------+
+                |    Service Layer     |
+                | Business Logic       |
+                +----------+-----------+
+                           |
+            +--------------+--------------+
+            |                             |
+            v                             v
++----------------------+      +----------------------+
+|   LangGraph Engine   |      |  Repository Layer    |
+| AI Evaluation Flow   |      | Database Operations  |
++----------+-----------+      +----------+-----------+
+           |                             |
+           v                             v
++----------------------+      +----------------------+
+| Gemini API Critics   |      | Supabase PostgreSQL  |
++----------------------+      +----------------------+
 ```
 
-# System Layers
+---
 
-## 1. Presentation Layer
+# Project Structure
 
-Responsible for interacting with the user.
-
-Components:
-
-- React / Next.js Frontend
-- API documentation (Swagger)
-
-Responsibilities:
-
-- Collect user input
-- Display evaluation results
-- Visualize analytics
-- Show critic reports
+```
+backend/
+│
+├── app/
+│   ├── adjudicator/
+│   ├── agents/
+│   ├── api/
+│   ├── auth/
+│   ├── database/
+│   ├── exceptions/
+│   ├── graph/
+│   ├── models/
+│   ├── repositories/
+│   ├── schemas/
+│   ├── services/
+│   ├── utils/
+│   └── main.py
+│
+├── requirements.txt
+└── .env
+```
 
 ---
 
-## 2. API Layer
+# Request Flow
 
-Implemented using FastAPI.
-
-Responsibilities:
-
-- Validate incoming requests
-- Create the initial ArbitrationState
-- Invoke the LangGraph workflow
-- Persist completed evaluations
-- Return API responses
-
-The API layer should contain **no evaluation logic**.
-
----
-
-## 3. Workflow Layer
-
-Implemented using LangGraph.
-
-This is the heart of the application.
-
-Responsibilities:
-
-- Execute critic agents
-- Manage execution flow
-- Synchronize parallel branches
-- Invoke the Adjudicator Agent
-
-The workflow knows nothing about:
-
-- databases
-- frontend
-- HTTP
-- authentication
-
-It only transforms state.
+```
+Client
+   │
+   ▼
+FastAPI Route
+   │
+   ▼
+Service Layer
+   │
+   ▼
+LangGraph Workflow
+   │
+   ├── Accuracy Agent
+   ├── Logic Agent
+   ├── Completeness Agent
+   │
+   ▼
+Adjudicator
+   │
+   ▼
+Evaluation Result
+   │
+   ▼
+Repository Layer
+   │
+   ▼
+Supabase Database
+   │
+   ▼
+JSON Response
+```
 
 ---
 
-## 4. AI Layer
+# Layer Responsibilities
 
-Implemented using Gemini.
+## API Layer
 
-Each AI agent has a single responsibility.
-
-Current agents:
-
-- Accuracy Critic
-- Logic Critic
-- Completeness Critic
-- Adjudicator
-
-Future agents:
-
-- Citation Critic
-- Toxicity Critic
-- Bias Critic
-- Style Critic
+- Defines REST endpoints
+- Validates requests
+- Handles authentication
+- Returns API responses
 
 ---
 
-## 5. Persistence Layer
+## Service Layer
 
-SQLite (later PostgreSQL)
-
-Responsibilities:
-
-- Store evaluations
-- Store scores
-- Store timestamps
-- Store analytics
-
-The database should never be accessed directly by LangGraph nodes.
+- Implements business logic
+- Executes LangGraph workflow
+- Coordinates repositories
+- Handles exports and analytics
 
 ---
 
-# ArbitrationState
+## Repository Layer
 
-Every LangGraph node receives the same shared state.
-
-Initially:
-
-{
-    prompt,
-    response
-}
-
-After Accuracy Critic:
-
-{
-    prompt,
-    response,
-    accuracy_result
-}
-
-After Logic Critic:
-
-{
-    prompt,
-    response,
-    accuracy_result,
-    logic_result
-}
-
-After Completeness Critic:
-
-{
-    prompt,
-    response,
-    accuracy_result,
-    logic_result,
-    completeness_result
-}
-
-After Adjudicator:
-
-{
-    prompt,
-    response,
-    accuracy_result,
-    logic_result,
-    completeness_result,
-    final_verdict
-}
+- Performs database operations
+- Creates, updates, deletes and retrieves records
+- Isolates SQLAlchemy logic from services
 
 ---
 
-# Critic Responsibilities
+## LangGraph Layer
 
-## Accuracy Critic
+Coordinates the evaluation pipeline.
 
-Checks:
-
-- factual correctness
-- hallucinations
-- unsupported claims
-
-Returns:
-
-- score
-- issues
-- reasoning
-
----
-
-## Logic Critic
-
-Checks:
-
-- logical consistency
-- contradictions
-- invalid reasoning
-
-Returns:
-
-- score
-- issues
-- reasoning
+```
+Prompt + Response
+        │
+        ▼
+Parallel Execution
+        │
+ ┌──────┼──────┐
+ │      │      │
+ ▼      ▼      ▼
+Accuracy Logic Completeness
+        │
+        ▼
+Adjudicator
+        │
+        ▼
+Final Verdict
+```
 
 ---
 
-## Completeness Critic
+# Database
 
-Checks:
+## Users
 
-- whether every part of the prompt was answered
+Stores registered users.
 
-Returns:
+## Evaluations
 
-- score
-- missing information
-- reasoning
+Stores every evaluated response.
 
----
+Each evaluation belongs to one user and may optionally belong to one experiment.
 
-## Adjudicator
+## Experiments
 
-Receives:
+Groups related evaluations.
 
-- original prompt
-- original response
-- all critic reports
-
-Produces:
-
-- overall score
-- confidence score
-- summary
-- confirmed issues
-- recommendations
+Deleting an experiment sets the associated evaluations' `experiment_id` to `NULL`, preserving the evaluation history.
 
 ---
 
-# Design Principles
+# Authentication
 
-- Single Responsibility Principle
-- Separation of Concerns
-- Stateless API Layer
-- Shared Workflow State
-- Modular AI Agents
-- Provider Abstraction
-- Extensible Architecture
+JWT-based authentication.
+
+```
+Register
+      │
+      ▼
+Password Hashing
+      │
+      ▼
+Database
+      │
+      ▼
+Login
+      │
+      ▼
+JWT Token
+      │
+      ▼
+Protected Endpoints
+```
 
 ---
 
-# Future Improvements
+# Technologies
 
-- Multi-model critics
-- Human feedback integration
-- Citation verification
-- Batch evaluation
-- Streaming support
-- Authentication
-- Analytics dashboard
-- Docker deployment
-- Kubernetes deployment
+| Layer | Technology |
+|--------|------------|
+| Frontend | React + Vite |
+| Backend | FastAPI |
+| Workflow | LangGraph |
+| LLM | Google Gemini |
+| Database | Supabase PostgreSQL |
+| ORM | SQLAlchemy |
+| Authentication | JWT |
+| Validation | Pydantic |
+| Deployment | Vercel |
