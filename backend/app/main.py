@@ -14,7 +14,7 @@ from app.models.experiment import Experiment
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title = "LLM Output Arbitrator",
+    title = "Verdict AI",
     version = "1.0.0",
 )
 

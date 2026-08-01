@@ -99,9 +99,7 @@ def evaluate(
             experiment_id=data.experiment_id
         )
 
-        return EvaluationResponse(
-            result = result
-        )
+        return result
     
     except LLMGenerationError as e:
         raise HTTPException(status_code=503, detail=str(e))

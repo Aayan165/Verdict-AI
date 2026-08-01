@@ -89,7 +89,19 @@ class EvaluationService:
             elapsed
         )
 
-        return verdict
+        return {
+            "accuracy_score": result["accuracy_result"].score,
+            "logic_score": result["logic_result"].score,
+            "completeness_score": result["completeness_result"].score,
+
+            "overall_score": verdict.overall_score,
+            "verdict": verdict.verdict,
+            "summary": verdict.summary,
+
+            "strengths": verdict.strengths,
+            "weaknesses": verdict.weaknesses,
+            "improvements": verdict.improvements,
+        }
     
     def get_user_evaluations(
         self,

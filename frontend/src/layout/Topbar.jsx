@@ -20,13 +20,6 @@ export default function Topbar({ onMenuClick, title, subtitle }) {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="hidden items-center gap-2 rounded-full border border-border bg-white/80 px-3 py-2 text-xs font-medium text-muted md:flex">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            Live backend connected
-          </div>
-          <Button variant="ghost" size="sm" className="hidden md:inline-flex">
-            <MoonStar className="h-4 w-4" />
-          </Button>
           <div className="flex items-center gap-3 rounded-full border border-border bg-white/80 px-2 py-2 pr-4 shadow-subtle">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-[#F7F1DE]">
               {getInitials(user?.email)}

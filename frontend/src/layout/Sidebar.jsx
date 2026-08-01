@@ -44,12 +44,12 @@ export default function Sidebar({ open, onClose }) {
             </div> */}
               <img
                 src={logo}
-                alt="LLM Arbitrator Logo"
+                alt="Verdict AI Logo"
                 className="flex h-12 w-12 items-center justify-center"
               />
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">LLM</p>
-              <p className="text-lg font-semibold leading-tight text-ink">Arbitrator</p>
+              <p className="text-lg font-semibold leading-tight text-ink">Verdict</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">AI</p>
             </div>
           </NavLink>
           <Button variant="ghost" size="sm" className="lg:hidden" onClick={onClose}>
@@ -87,7 +87,7 @@ export default function Sidebar({ open, onClose }) {
             </div>
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-ink">{user?.email || 'Signed in user'}</p>
-              <p className="truncate text-xs text-muted">JWT session active</p>
+              <p className="truncate text-xs text-muted">Successfully Logged in</p>
             </div>
           </div>
 

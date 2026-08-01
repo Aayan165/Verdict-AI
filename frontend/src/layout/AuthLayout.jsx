@@ -20,13 +20,14 @@ export default function AuthLayout({ title, description, children }) {
               />
 
               <div className="text-center">
+                <h1 className="text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl [word-spacing:12px]">
+                  Verdict
+                </h1>
+
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#F7F1DE]/70">
-                  LLM
+                  AI
                 </p>
 
-                <h1 className="text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl [word-spacing:12px]">
-                  Arbitrator System
-                </h1>
               </div>
             </div>
 
