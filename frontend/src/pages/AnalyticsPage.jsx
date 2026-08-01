@@ -159,7 +159,7 @@ export default function AnalyticsPage() {
               <LineChart data={timelineData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(78,34,15,0.08)" />
                 <XAxis dataKey="date" stroke="#7A6A57" />
-                <YAxis stroke="#7A6A57" domain={[0, 100]} />
+                <YAxis stroke="#7A6A57" domain={[0, 10]} />
                 <Tooltip />
                 <Line type="monotone" dataKey="score" stroke="#4E220F" strokeWidth={3} dot={{ r: 4 }} />
               </LineChart>

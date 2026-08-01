@@ -10,7 +10,7 @@ export const endpoints = {
     evaluations: '/evaluations',
     deleteEvaluation: (id) => `/evaluations/${id}`,
     export: '/export/evaluations',
-    addToExperiment: (experimentId) => `/experiments/${experimentId}/evaluations`,
+    addToExperiment: (experimentId, evaluationId) => `/experiments/${experimentId}/evaluations/${evaluationId}`,
     removeFromExperiment: (experimentId, evaluationId) => `/experiments/${experimentId}/evaluations/${evaluationId}`,
   },
   analytics: '/analytics',

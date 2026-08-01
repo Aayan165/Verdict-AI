@@ -31,12 +31,12 @@ export async function exportExperimentCsv(id) {
   return response.data;
 }
 
-export async function addEvaluationToExperiment(id, payload) {
-  const response = await api.post(endpoints.experimentEvaluations(id), payload);
+export async function addEvaluationToExperiment(id, evaluationId) {
+  const response = await api.post(endpoints.evaluation.addToExperiment(id, evaluationId));
   return response.data;
 }
 
 export async function removeEvaluationFromExperiment(id, evaluationId) {
-  const response = await api.delete(endpoints.experimentEvaluationDelete(id, evaluationId));
+  const response = await api.delete(endpoints.evaluation.removeFromExperiment(id, evaluationId));
   return response.data;
 }

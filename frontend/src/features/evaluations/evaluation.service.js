@@ -31,8 +31,8 @@ export async function exportEvaluations() {
   return response.data;
 }
 
-export async function addEvaluationToExperiment(experimentId, payload) {
-  const response = await api.post(endpoints.evaluation.addToExperiment(experimentId), payload);
+export async function addEvaluationToExperiment(experimentId, evaluationId) {
+  const response = await api.post(endpoints.evaluation.addToExperiment(experimentId, evaluationId));
   return response.data;
 }
 

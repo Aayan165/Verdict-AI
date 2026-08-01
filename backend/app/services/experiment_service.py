@@ -169,3 +169,31 @@ class ExperimentService:
         )
 
         return output.getvalue()
+
+    def add_evaluation_to_experiment(
+            self,
+            db: Session,
+            experiment_id: int,
+            evaluation_id: int,
+            user_id: str
+    ):
+        self.repository.add_evaluation_to_experiment(
+            db=db,
+            experiment_id=experiment_id,
+            evaluation_id=evaluation_id,
+            user_id=user_id
+        )
+
+    def remove_evaluation_from_experiment(
+        self,
+        db:Session,
+        experiment_id: int,
+        evaluation_id: int,
+        user_id: str
+    ):
+        self.repository.remove_evaluation_from_experiment(
+            db=db,
+            experiment_id=experiment_id,
+            evaluation_id=evaluation_id,
+            user_id=user_id
+        )

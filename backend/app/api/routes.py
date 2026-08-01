@@ -136,6 +136,26 @@ def create_experiment(
         description=data.description
     )
 
+@router.post(
+    "/experiments/{experiment_id}/evaluations/{evaluation_id}"
+)
+def evaluation_to_experiment(
+    experiment_id: int,
+    evaluation_id: int,
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    experiment = experiment_service.add_evaluation_to_experiment(
+        db=db,
+        experiment_id=experiment_id,
+        evaluation_id=evaluation_id,
+        user_id=current_user.id
+    )
+
+    return {
+        "message": "Evaluation added to experiment successfully.",
+    }
+
 #===============================================================================
 #           Gets
 #===============================================================================
@@ -398,4 +418,24 @@ def delete_experiment(
 
     return {
         "message": "Experiment deleted successfully."
+    }
+
+@router.delete(
+    "/experiments/{experiment_id}/evaluations/{evaluation_id}"
+)
+def remove_evaluation_from_experiment(
+    experiment_id: int,
+    evaluation_id: int,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    experiment_service.remove_evaluation_from_experiment(
+        db=db,
+        experiment_id=experiment_id,
+        evaluation_id=evaluation_id,
+        user_id=current_user.id
+    )
+
+    return {
+        "message": "Evaluation removed from experiment successfully."
     }

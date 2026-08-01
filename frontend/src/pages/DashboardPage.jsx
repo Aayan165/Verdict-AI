@@ -121,7 +121,7 @@ export default function DashboardPage() {
               <BarChart data={averageScoreData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(78,34,15,0.08)" />
                 <XAxis dataKey="name" stroke="#7A6A57" />
-                <YAxis stroke="#7A6A57" domain={[0, 100]} />
+                <YAxis stroke="#7A6A57" domain={[0, 10]} />
                 <Tooltip />
                 <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="#4E220F" />
               </BarChart>
@@ -223,7 +223,7 @@ export default function DashboardPage() {
                   <LineChart data={trendData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(78,34,15,0.08)" />
                     <XAxis dataKey="date" hide />
-                    <YAxis stroke="#7A6A57" domain={[0, 100]} />
+                    <YAxis stroke="#7A6A57" domain={[0, 10]} />
                     <Tooltip />
                     <Line type="monotone" dataKey="score" stroke="#4E220F" strokeWidth={3} dot={{ r: 4 }} />
                   </LineChart>

@@ -85,7 +85,7 @@ export default function EvaluationsPage() {
     try {
       await addEvaluationToExperiment(
         Number(values.experimentId),
-        selectedEvaluation
+        selectedEvaluation.id
       );
 
       toast.success('Evaluation added to experiment');
