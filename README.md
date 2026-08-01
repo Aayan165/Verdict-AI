@@ -169,12 +169,10 @@ LLM Response
       │
       ▼
  LangGraph
-      │
- ┌────┼────┐
- ▼    ▼    ▼
-Accuracy
-Logic
-Completeness
+         │
+ ┌───────┼─────────┐
+ ▼       ▼         ▼
+Accuracy Logic   Completeness
       │
       ▼
  Adjudicator
