@@ -171,3 +171,11 @@ class EvaluationRepository:
             .order_by(Evaluation.created_at.desc())
             .all()
         )
+
+    def delete(
+        self,
+        db: Session,
+        evaluation: Evaluation
+    ):
+        db.delete(evaluation)
+        db.commit()

@@ -264,3 +264,25 @@ class EvaluationService:
         )
 
         return output.getvalue()
+
+    def delete_evaluation(
+        self,
+        db: Session,
+        evaluation_id: int,
+        user_id: str
+    ):
+        evaluation = self.repository.get_evaluation(
+            db=db,
+            evaluation_id=evaluation_id,
+            user_id=user_id
+        )
+
+        if evaluation is None:
+            raise EvaluationError(
+                "Evaluation not found."
+            )
+
+        self.repository.delete(
+            db=db,
+            evaluation=evaluation
+        )

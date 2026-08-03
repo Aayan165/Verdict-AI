@@ -437,3 +437,38 @@ def remove_evaluation_from_experiment(
     return {
         "message": "Evaluation removed from experiment successfully."
     }
+
+@router.delete(
+    "/evaluations/{evaluation_id}",
+    status_code=status.HTTP_200_OK,
+    summary="Delete an evaluation",
+)
+def delete_evaluation(
+    evaluation_id: int,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    try:
+        service.delete_evaluation(
+            db=db,
+            evaluation_id=evaluation_id,
+            user_id=current_user.id
+        )
+        return {
+            "message": "Evaluation deleted successfully."
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=404,
+            detail=str(e)
+        )
+    except DatabaseError as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Unexpected Server error."
+        )
