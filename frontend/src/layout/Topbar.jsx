@@ -1,10 +1,12 @@
-import { Menu, MoonStar, Sparkles } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { Menu } from 'lucide-react';
 import Button from '../components/Button';
 import { useAuth } from '../hooks/useAuth';
 import { getInitials } from '../utils/jwt';
 
 export default function Topbar({ onMenuClick, title, subtitle }) {
-  const { user } = useAuth();
+  const { user, profile, profileLoading } = useAuth();
+  const displayName = profile?.full_name || user?.email || 'Authenticated user';
 
   return (
     <header className="sticky top-0 z-20 border-b border-[rgba(78,34,15,0.08)] bg-[rgba(247,241,222,0.88)] backdrop-blur-xl">
@@ -20,15 +22,19 @@ export default function Topbar({ onMenuClick, title, subtitle }) {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-3 rounded-full border border-border bg-white/80 px-2 py-2 pr-4 shadow-subtle">
+          <Button
+            as={NavLink}
+            to="/profile"
+            variant="ghost"
+            className="flex items-center gap-3 rounded-full border border-border bg-white/80 px-2 py-2 pr-4 text-left shadow-subtle hover:bg-white"
+          >
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-[#F7F1DE]">
-              {getInitials(user?.email)}
+              {getInitials(displayName)}
             </div>
-            <div className="hidden sm:block">
-              <p className="text-sm font-semibold text-ink">{user?.email || 'Authenticated user'}</p>
-              {/* <p className="text-xs text-muted">JWT session</p> */}
+            <div className="hidden text-left sm:block">
+              <p className="text-sm font-semibold text-ink">{profileLoading ? 'Loading profile...' : displayName}</p>
             </div>
-          </div>
+          </Button>
         </div>
       </div>
     </header>

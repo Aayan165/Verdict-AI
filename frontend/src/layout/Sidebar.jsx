@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { BarChart3, FileText, Gauge, LogOut, PanelsTopLeft, PlaySquare, Shapes, UserCircle2, X } from 'lucide-react';
 import { cn } from '../utils/classNames';
@@ -18,8 +17,7 @@ const navigation = [
 ];
 
 export default function Sidebar({ open, onClose }) {
-  const { user, logout } = useAuth();
-  const userBadge = useMemo(() => getInitials(user?.email), [user?.email]);
+  const { logout } = useAuth();
 
   return (
     <>
@@ -81,20 +79,10 @@ export default function Sidebar({ open, onClose }) {
         </nav>
 
         <div className="mt-4 rounded-xl border border-border bg-white/70 p-4 shadow-soft">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[rgba(78,34,15,0.08)] font-semibold text-primary">
-              {userBadge}
-            </div>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-ink">{user?.email || 'Signed in user'}</p>
-              <p className="truncate text-xs text-muted">Successfully Logged in</p>
-            </div>
-          </div>
-
           <Button
             variant="danger"
             size="sm"
-            className="mt-4 w-full"
+            className="w-full"
             onClick={() => {
               logout();
               window.location.assign('/login');

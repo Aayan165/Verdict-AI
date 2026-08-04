@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { loginRequest, registerRequest } from '../features/auth/auth.service';
+import { getProfile } from '../features/profile/profile.service';
 import { buildAuthSession, clearAuthSession, readAuthSession, saveAuthSession } from '../services/storage';
 import { getUserProfileFromToken } from '../utils/jwt';
 
@@ -24,6 +25,8 @@ function normalizeSessionPayload(payload) {
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
@@ -39,6 +42,7 @@ export function AuthProvider({ children }) {
     const handleLogout = () => {
       setSession(null);
       setUser(null);
+      setProfile(null);
       clearAuthSession();
     };
 
@@ -77,19 +81,79 @@ export function AuthProvider({ children }) {
     clearAuthSession();
     setSession(null);
     setUser(null);
+    setProfile(null);
   };
+
+  const refreshProfile = async () => {
+    if (!session?.accessToken) {
+      setProfile(null);
+      return null;
+    }
+
+    setProfileLoading(true);
+
+    try {
+      const nextProfile = await getProfile();
+      setProfile(nextProfile);
+      return nextProfile;
+    } catch {
+      setProfile(null);
+      return null;
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!session?.accessToken) {
+      setProfile(null);
+      setProfileLoading(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+
+    const loadProfile = async () => {
+      setProfileLoading(true);
+
+      try {
+        const nextProfile = await getProfile();
+
+        if (!cancelled) {
+          setProfile(nextProfile);
+        }
+      } catch {
+        if (!cancelled) {
+          setProfile(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setProfileLoading(false);
+        }
+      }
+    };
+
+    loadProfile();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session]);
 
   const value = useMemo(
     () => ({
       session,
       user,
+      profile,
+      profileLoading,
       hydrated,
       isAuthenticated: Boolean(session?.accessToken),
       login,
       register,
       logout,
+      refreshProfile,
     }),
-    [session, user, hydrated],
+    [session, user, profile, profileLoading, hydrated, refreshProfile],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

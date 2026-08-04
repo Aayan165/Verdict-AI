@@ -2,6 +2,11 @@ from datetime import datetime
 from pydantic import BaseModel
 from uuid import UUID
 
+
+class UserProfileUpdate(BaseModel):
+    full_name: str | None = None
+
+
 class UserProfileResponse(BaseModel):
     id: UUID
     full_name: str | None = None

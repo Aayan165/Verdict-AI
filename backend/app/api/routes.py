@@ -17,7 +17,7 @@ from app.schemas.experiment import (
     ExperimentCreate,
     ExperimentResponse
 )
-from app.schemas.user_profile import UserProfileResponse
+from app.schemas.user_profile import UserProfileResponse, UserProfileUpdate
 
 #Database
 from app.database.session import SessionLocal
@@ -410,6 +410,24 @@ def get_profile(
         )
 
     return profile
+
+
+@router.put(
+    "/profile",
+    response_model=UserProfileResponse,
+    summary="Update user profile",
+    description="Updates the authenticated user's profile details.",
+)
+def update_profile(
+    data: UserProfileUpdate,
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    return user_profile_service.update_profile(
+        db=db,
+        current_user=current_user,
+        full_name=data.full_name,
+    )
 
 
 #===============================================================================

@@ -38,9 +38,10 @@ export function getInitials(email) {
     return 'LA';
   }
 
-  return email
-    .split('@')[0]
-    .split(/[._-]/)
+  const value = email.includes('@') ? email.split('@')[0] : email;
+
+  return value
+    .split(/[._-\s]/)
     .filter(Boolean)
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
