@@ -22,14 +22,19 @@ export default function RegisterPage() {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(registerSchema),
-    defaultValues: { email: '', password: '', confirmPassword: '' },
+    defaultValues: {
+      fullName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
   });
 
   const onSubmit = async (values) => {
     setSubmitting(true);
 
     try {
-      const result = await registerUser({ email: values.email, password: values.password });
+      const result = await registerUser({ fullName: values.fullName, email: values.email, password: values.password });
 
       if (result?.access_token || result?.session?.access_token) {
         toast.success('Account created');
@@ -51,6 +56,7 @@ export default function RegisterPage() {
       description="Register to track experiments, review evaluations, and export results from the arbitrator workspace."
     >
       <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+        <Input label="Full Name" placeholder="Jhon Doe" {...register('fullName')} error={errors.fullName?.message} />
         <Input label="Email" type="email" autoComplete="email" placeholder="name@company.com" {...register('email')} error={errors.email?.message} />
         <Input label="Password" type="password" autoComplete="new-password" placeholder="Create a strong password" {...register('password')} error={errors.password?.message} />
         <Input label="Confirm password" type="password" autoComplete="new-password" placeholder="Repeat the password" {...register('confirmPassword')} error={errors.confirmPassword?.message} />

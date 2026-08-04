@@ -76,7 +76,11 @@ export default function EvaluatePage() {
 
     try {
       const response = await evaluateResponse(values);
+
+      console.log("Evaluate API Response:", response);
+
       setResult(response?.result || response);
+
       toast.success('Evaluation completed');
     } catch (error) {
       toast.error(extractApiError(error));
@@ -113,7 +117,9 @@ export default function EvaluatePage() {
     setAttaching(true);
 
     try {
-      await addEvaluationToExperiment(Number(values.experimentId), evaluationPayload);
+      console.log("Experiment:", Number(values.experimentId));
+      console.log("Evaluation:", result.id);
+      await addEvaluationToExperiment(Number(values.experimentId), result.id);
       toast.success('Evaluation added to experiment');
       setAttachOpen(false);
       attachForm.reset();

@@ -22,7 +22,6 @@ export default function ExperimentsPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [experiments, setExperiments] = useState([]);
-  const [evaluationCounts, setEvaluationCounts] = useState({});
   const [createOpen, setCreateOpen] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [exportingId, setExportingId] = useState(null);
@@ -41,18 +40,8 @@ export default function ExperimentsPage() {
     setLoading(true);
 
     try {
-      const [experimentData, evaluationData] = await Promise.all([getExperiments(), getMyEvaluations()]);
-      const counts = (Array.isArray(evaluationData) ? evaluationData : []).reduce((accumulator, item) => {
-        if (!item.experiment_id) {
-          return accumulator;
-        }
-
-        accumulator[item.experiment_id] = (accumulator[item.experiment_id] || 0) + 1;
-        return accumulator;
-      }, {});
-
+      const experimentData = await getExperiments();
       setExperiments(Array.isArray(experimentData) ? experimentData : []);
-      setEvaluationCounts(counts);
     } catch (error) {
       toast.error(extractApiError(error));
     } finally {
@@ -127,7 +116,7 @@ export default function ExperimentsPage() {
                   </div>
                   <div className="rounded-2xl border border-border bg-[rgba(176,186,153,0.14)] p-4">
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">Evaluations</p>
-                    <p className="mt-2 text-3xl font-semibold text-ink">{formatNumber(evaluationCounts[experiment.id] || 0)}</p>
+                    <p className="mt-2 text-3xl font-semibold text-ink">{formatNumber(experiment.evaluation_count)}</p>
                   </div>
                 </div>
 

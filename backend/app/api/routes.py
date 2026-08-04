@@ -17,6 +17,7 @@ from app.schemas.experiment import (
     ExperimentCreate,
     ExperimentResponse
 )
+from app.schemas.user_profile import UserProfileResponse
 
 #Database
 from app.database.session import SessionLocal
@@ -32,9 +33,10 @@ from app.exceptions.custom import (
     LLMGenerationError
 )
 
-#Serivices
+#Services
 from app.services.evaluation_service import EvaluationService
 from app.services.experiment_service import ExperimentService
+from app.services.user_profile_service import UserProfileService
 
 #Workflow (langgraph)
 from app.graph.workflow import build_graph
@@ -49,6 +51,7 @@ from app.auth.dependencies import get_current_user
 router = APIRouter()
 service = EvaluationService()
 experiment_service = ExperimentService()
+user_profile_service = UserProfileService()
 auth_service = AuthService()
 
 #===============================================================================
@@ -386,6 +389,28 @@ def export_experiment(
             f'attachment; filename="experiment_{experiment_id}.csv"'
         }
     )
+
+@router.get(
+    "/profile",
+    response_model=UserProfileResponse
+)
+def get_profile(
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    profile = user_profile_service.get_profile(
+        db=db,
+        current_user=current_user
+    )
+
+    if profile is None:
+        raise HTTPException(
+            status_code=404,
+            detail="User profile not found."
+        )
+
+    return profile
+
 
 #===============================================================================
 #           Deletes

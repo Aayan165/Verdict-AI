@@ -35,10 +35,10 @@ class ExperimentRepository:
         )
 
     def get_by_id(
-            self,
-            db: Session,
-            experiment_id: int,
-            user_id: str
+        self,
+        db: Session,
+        experiment_id: int,
+        user_id: str
     ):
         return (
             db.query(Experiment)
@@ -185,3 +185,14 @@ class ExperimentRepository:
         )
 
         return evaluation
+
+    def count_by_user(
+        self,
+        db: Session,
+        user_id: str
+    ):
+        return (
+            db.query(func.count(Experiment.id))
+            .filter(Experiment.user_id == user_id)
+            .scalar()
+        )

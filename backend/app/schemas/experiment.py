@@ -10,6 +10,7 @@ class ExperimentResponse(BaseModel):
     name: str
     description: str | None = None
     created_at: datetime
+    evaluation_count: int
 
     class Config:
         from_attributes = True

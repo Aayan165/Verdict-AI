@@ -3,6 +3,8 @@ from typing import List
 from app.schemas.verdict import FinalVerdict
 
 class EvaluationResponse(BaseModel):
+    id: int
+
     accuracy_score: float
     logic_score: float
     completeness_score: float

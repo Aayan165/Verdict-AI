@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy.orm import relationship
 from datetime import datetime
 
 #Databases
@@ -15,3 +16,12 @@ class Experiment(Base):
         DateTime,
         default=datetime.utcnow
     )
+    evaluations = relationship(
+        "Evaluation",
+        back_populates="experiment",
+        passive_deletes=True,
+    )
+
+    @property
+    def evaluation_count(self):
+        return len(self.evaluations)

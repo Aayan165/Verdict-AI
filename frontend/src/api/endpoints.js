@@ -16,6 +16,7 @@ export const endpoints = {
   analytics: '/analytics',
   modelComparison: '/model-comparison',
   experiments: '/experiments',
+  profile: '/profile',
   experimentById: (id) => `/experiments/${id}`,
   experimentEvaluations: (id) => `/experiments/${id}/evaluations`,
   experimentExport: (id) => `/experiments/${id}/export`,

@@ -25,5 +25,20 @@ export async function registerRequest(payload) {
     throw response.error;
   }
 
+  const user = response.data.user;
+
+  if (user) {
+    const { error } = await supabase
+      .from('user_profiles')
+      .insert({
+        id: user.id,
+        full_name: payload.fullName ?? null,
+      });
+
+    if (error) {
+      throw error;
+    }
+  }
+
   return response.data;
 }

@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, Text, DateTime, ForeignKey
 from datetime import datetime
+from sqlalchemy.orm import relationship
 
 from app.database.session import Base
 
@@ -29,4 +30,9 @@ class Evaluation(Base):
     created_at = Column(
         DateTime,
         default=datetime.utcnow
+    )
+
+    experiment = relationship(
+        "Experiment",
+        back_populates="evaluations"
     )

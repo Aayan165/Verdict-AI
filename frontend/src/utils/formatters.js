@@ -8,10 +8,11 @@ export function formatDateTime(value) {
     return '—';
   }
 
-  return new Intl.DateTimeFormat('en', {
+  return new Intl.DateTimeFormat('en-PK', {
     dateStyle: 'medium',
     timeStyle: 'short',
-  }).format(new Date(value));
+    timeZone: 'Asia/Karachi',
+  }).format(new Date(`${value}Z`));
 }
 
 export function formatShortDate(value) {
@@ -19,10 +20,12 @@ export function formatShortDate(value) {
     return '—';
   }
 
-  return new Intl.DateTimeFormat('en', {
+  return new Intl.DateTimeFormat('en-PK', {
     month: 'short',
     day: 'numeric',
-  }).format(new Date(value));
+    year: 'numeric',
+    timeZone: 'Asia/Karachi',
+  }).format(new Date(`${value}Z`));
 }
 
 export function formatPercent(value) {

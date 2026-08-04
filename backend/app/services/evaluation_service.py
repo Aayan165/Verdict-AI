@@ -90,6 +90,8 @@ class EvaluationService:
         )
 
         return {
+            "id": evaluation.id,
+
             "accuracy_score": result["accuracy_result"].score,
             "logic_score": result["logic_result"].score,
             "completeness_score": result["completeness_result"].score,
