@@ -13,9 +13,18 @@ import ModelComparisonPage from '../pages/ModelComparisonPage';
 import ExperimentsPage from '../pages/ExperimentsPage';
 import ExperimentDetailPage from '../pages/ExperimentDetailPage';
 import ProfilePage from '../pages/ProfilePage';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export default function AppRouter() {
-  return (
+    const { pathname } = useLocation();
+  
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, [pathname]); 
+
+
+    return (
     <Routes>
       <Route element={<PublicOnlyRoute />}>
         <Route path="/" element={<LandingPage />} />
