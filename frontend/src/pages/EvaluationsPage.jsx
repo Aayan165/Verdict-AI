@@ -127,11 +127,18 @@ export default function EvaluationsPage() {
     };
   }, []);
 
+  console.log(evaluations);
   const verdictOptions = useMemo(() => [...new Set(evaluations.map((item) => item.verdict).filter(Boolean))], [evaluations]);
 
   const filtered = useMemo(() => {
     return evaluations
-      .filter((item) => (modelFilter ? item.model_name.toLowerCase().includes(modelFilter.toLowerCase()) : true))
+      .filter(
+        (item) =>
+          !modelFilter ||
+          (item.model_name || "")
+            .toLowerCase()
+            .includes(modelFilter.toLowerCase())
+      )
       .filter((item) => (verdictFilter ? item.verdict === verdictFilter : true))
       .sort((left, right) => {
         if (sortBy === 'overall_score') {

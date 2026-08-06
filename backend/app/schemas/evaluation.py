@@ -5,6 +5,7 @@ class EvaluationRecord(BaseModel):
     id: int
     prompt: str
     response: str
+    model_name: str
     accuracy_score: float
     logic_score: float
     completeness_score: float
